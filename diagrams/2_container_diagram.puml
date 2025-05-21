@@ -1,0 +1,52 @@
+@startuml
+!include  c4_plantum/C4_Container.puml
+!define DEVICONS icons
+!include DEVICONS/python.puml
+!include DEVICONS/vuejs.puml
+!include DEVICONS/nginx_original.puml
+!include DEVICONS/postgresql.puml
+!include DEVICONS/apachekafka_original.puml
+
+HIDE_STEREOTYPE()
+
+title Диаграмма контейнеров (Containers) проекта "Smart Home"
+
+AddElementTag("broker_message", $bgColor="#c74323", $fontColor="white")
+
+Person(user, "Пользователь")
+System_Boundary(system_boundary, "Система проекта Smart Home") {
+    Container(webApp, "Веб приложение", "VueJS", $sprite="vuejs")
+    Container(apiGateway, "API Gateway", "Nginx", $sprite="nginx_original")
+
+    Container(serviceUser, "Сервис пользователи", "Python", $sprite="python")
+    Container(serviceDevice, "Сервис устройств", "Python", $sprite="python")
+    Container(serviceMonitoring, "Сервис мониторинг", "Python", $sprite="python")
+
+    ContainerDb(user_db, "Пользователи", "PostgreSQL", $sprite="postgresql")
+    ContainerDb(devices_db, "Устройства и их конфигурация", "PostgreSQL", $sprite="postgresql")
+    ContainerDb(stat_db, "Мониторинг устройств", "PostgreSQL", $sprite="postgresql")
+
+    ContainerQueue(messageQueue, "Очередь сообщений", "Apache Kafka", $tags="broker_message")
+}
+
+Rel(user, webApp, "HTTPS")
+Rel_R(webApp, apiGateway, "HTTPS")
+Rel_L(apiGateway, webApp, "HTTPS/WebSocket")
+
+Rel_D(apiGateway, serviceUser, "REST", "HTTPS/JSON")
+Rel_D(apiGateway, serviceDevice, "REST", "HTTPS/JSON")
+Rel_D(apiGateway, serviceMonitoring, "REST", "HTTPS/JSON")
+
+Rel_D(serviceUser, user_db, "чтение запись", "SQL")
+Rel_D(serviceDevice, devices_db, "чтение запись", "SQL")
+Rel_D(serviceMonitoring, stat_db, "чтение запись", "SQL")
+
+Rel_L(serviceMonitoring, apiGateway, "Состояния устройств", "WebSocket")
+
+Rel_U(serviceDevice, messageQueue, "отправка события")
+Rel_U(messageQueue, serviceDevice, "получаем сообщение из очереди")
+
+Rel_D(serviceMonitoring, messageQueue, "отправка события")
+Rel_L(messageQueue, serviceMonitoring, "получаем сообщение из очереди")
+
+@enduml

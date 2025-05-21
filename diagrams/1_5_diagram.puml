@@ -1,0 +1,18 @@
+@startuml
+!include  c4_plantum/C4_Container.puml
+HIDE_STEREOTYPE()
+
+title Диаграмма контекста проекта "Smart Home Monolith"
+
+Person(user, "Пользователь", "Любой пользователь который перейдет на веб адрес системы управления")
+Person(admin, "Администратор", "Специалист который выезжает для подключения системы отопления")
+
+System(warmhouse, "Приложение")
+System_Ext(heating_module, "Система отопления")
+
+Rel(user, warmhouse, "Управляет отоплением и получает температуру")
+Rel(admin, warmhouse, "Регистрирует новые устройства")
+
+Rel(warmhouse, heating_module, "Устанавливает температуру, включает и выключает отопление")
+Rel(heating_module, warmhouse, "Получает температуру")
+@enduml

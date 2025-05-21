@@ -17,6 +17,7 @@
     </parent>
 
     <properties>
+        <maven.compiler.release>17</maven.compiler.release>
         <java.version>17</java.version>
         <springfox-swagger.version>3.0.0</springfox-swagger.version>
         <lombok.version>1.18.34</lombok.version>
