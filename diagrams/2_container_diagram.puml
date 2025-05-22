@@ -12,6 +12,7 @@ HIDE_STEREOTYPE()
 title Диаграмма контейнеров (Containers) проекта "Smart Home"
 
 AddElementTag("broker_message", $bgColor="#c74323", $fontColor="white")
+AddElementTag("database", $bgColor="#8ca965", $fontColor="white")
 
 Person(user, "Пользователь")
 System_Boundary(system_boundary, "Система проекта Smart Home") {
@@ -22,11 +23,11 @@ System_Boundary(system_boundary, "Система проекта Smart Home") {
     Container(serviceDevice, "Сервис устройств", "Python", $sprite="python")
     Container(serviceMonitoring, "Сервис мониторинг", "Python", $sprite="python")
 
-    ContainerDb(user_db, "Пользователи", "PostgreSQL", $sprite="postgresql")
-    ContainerDb(devices_db, "Устройства и их конфигурация", "PostgreSQL", $sprite="postgresql")
-    ContainerDb(stat_db, "Мониторинг устройств", "PostgreSQL", $sprite="postgresql")
+    ContainerDb(user_db, "Пользователи", "PostgreSQL", $sprite="postgresql", $tags="database")
+    ContainerDb(devices_db, "Устройства и их конфигурация", "PostgreSQL", $sprite="postgresql", $tags="database")
+    ContainerDb(stat_db, "Мониторинг устройств", "PostgreSQL", $sprite="postgresql", $tags="database")
 
-    ContainerQueue(messageQueue, "Очередь сообщений", "Apache Kafka", $tags="broker_message")
+    ContainerQueue(messageQueue, "Очередь сообщений", "Apache Kafka", $sprite="apachekafka_original", $tags="broker_message")
 }
 
 Rel(user, webApp, "HTTPS")

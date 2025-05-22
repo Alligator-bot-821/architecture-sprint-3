@@ -1,0 +1,43 @@
+@startuml
+package "Компонент сервиса устройств" {
+
+    class AddDeviceController {
+        - publishMessageEvent(deviceId: String, data: DeviceMessageQueue): void
+        + addDevice(id: String, deviceData: DeviceData): Device
+        + removeDevice(id: String): void
+        + getDevice(id: String): Device
+        + getDevices(): Device[]
+    }
+
+    class SetDataDeviceController {
+        - publishMessageEvent(deviceId: String, data: DeviceMessageQueue): void
+        + setDataDevice(id: String, deviceData: DeviceParams): void
+    }
+
+    class GetDataDeviceController {
+        + getDataDevice(id: String): DeviceParams
+    }
+
+    class SendEventMessageQueue {
+        + pubMessageEvent(deviceId: String, data: MessageData): void
+        + subMessageEvent(deviceId: String): MessageData
+        + changeStateMessageEvent(deviceId: String, status: DeviceStatus): void
+    }
+
+    class DeviceRepository {
+        + saveDevice(id: String, deviceData: DeviceData): Device
+        + removeDevice(id: String): void
+        + getDevice(id: String): Device
+        + getDevices(): Device[]
+        + getDataDevice(id: String): DeviceParams
+        + setDataDevice(id: String, deviceData: DeviceParams): void
+    }
+
+    AddDeviceController --> DeviceRepository
+    SetDataDeviceController --> DeviceRepository
+    GetDataDeviceController --> DeviceRepository
+
+    SetDataDeviceController --> SendEventMessageQueue
+    AddDeviceController --> SendEventMessageQueue
+}
+@enduml
