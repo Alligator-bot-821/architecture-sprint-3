@@ -19,9 +19,9 @@ System_Boundary(system_boundary, "Система проекта Smart Home") {
     Container(webApp, "Веб приложение", "VueJS", $sprite="vuejs")
     Container(apiGateway, "API Gateway", "Nginx", $sprite="nginx_original")
 
-    Container(serviceUser, "Сервис пользователи", "Python", $sprite="python")
-    Container(serviceDevice, "Сервис устройств", "Python", $sprite="python")
-    Container(serviceMonitoring, "Сервис мониторинг", "Python", $sprite="python")
+    Container(serviceUser, "Сервис пользователи", "Python/FastAPI", $sprite="python")
+    Container(serviceDevice, "Сервис устройств", "Python/FastAPI", $sprite="python")
+    Container(serviceMonitoring, "Сервис мониторинг", "Python/FastAPI", $sprite="python")
 
     ContainerDb(user_db, "Пользователи", "PostgreSQL", $sprite="postgresql", $tags="database")
     ContainerDb(devices_db, "Устройства и их конфигурация", "PostgreSQL", $sprite="postgresql", $tags="database")
@@ -44,8 +44,8 @@ Rel_D(serviceMonitoring, stat_db, "чтение запись", "SQL")
 
 Rel_L(serviceMonitoring, apiGateway, "Состояния устройств", "WebSocket")
 
-Rel_U(serviceDevice, messageQueue, "отправка события")
-Rel_U(messageQueue, serviceDevice, "получаем сообщение из очереди")
+Rel_U(serviceDevice, messageQueue, "отправка события", "", "изменилось значение датчика: Изменилась температура, устройство не в сети")
+Rel_U(messageQueue, serviceDevice, "получаем сообщение из очереди", "", "изменилось значение датчика: Изменилась температура, устройство не в сети")
 
 Rel_D(serviceMonitoring, messageQueue, "отправка события")
 Rel_L(messageQueue, serviceMonitoring, "получаем сообщение из очереди")

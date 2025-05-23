@@ -1,18 +1,25 @@
 @startuml
 !include  c4_plantum/C4_Container.puml
+!define DEVICONS icons
+!include DEVICONS/java.puml
+!include DEVICONS/postgresql.puml
 HIDE_STEREOTYPE()
+AddElementTag("database", $bgColor="#8ca965", $fontColor="white")
 
 title Диаграмма контекста проекта "Smart Home Monolith"
 
 Person(user, "Пользователь", "Любой пользователь который перейдет на веб адрес системы управления")
 Person(admin, "Администратор", "Специалист который выезжает для подключения системы отопления")
 
-System(warmhouse, "Приложение")
+Container(warmhouse, "Приложение", "Java/Spring MVC", $sprite="java")
+ContainerDb(database, "База данных", "PostgreSQL", $sprite="postgresql", $tags="database")
 System_Ext(heating_module, "Система отопления")
 
-Rel(user, warmhouse, "Управляет отоплением и получает температуру")
-Rel(admin, warmhouse, "Регистрирует новые устройства")
+Rel_D(user, warmhouse, "Управляет отоплением и получает температуру")
+Rel_D(admin, warmhouse, "Регистрирует новые устройства")
 
-Rel(warmhouse, heating_module, "Устанавливает температуру, включает и выключает отопление")
-Rel(heating_module, warmhouse, "Получает температуру")
+Rel_D(warmhouse, heating_module, "Устанавливает температуру, включает и выключает отопление", "HTTP/MQTT")
+Rel_D(heating_module, warmhouse, "Получает температуру", "HTTP/MQTT")
+
+Rel_R(warmhouse, database, "чтение запись", "SQL")
 @enduml
