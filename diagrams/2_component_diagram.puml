@@ -1,0 +1,49 @@
+@startuml
+!include  c4_plantum/C4_Container.puml
+!define DEVICONS icons
+!include DEVICONS/python.puml
+!include DEVICONS/vuejs.puml
+!include DEVICONS/nginx_original.puml
+!include DEVICONS/postgresql.puml
+!include DEVICONS/apachekafka_original.puml
+
+HIDE_STEREOTYPE()
+
+title Диаграмма компонентов (Components) проекта "Smart Home"
+
+AddElementTag("broker_message", $bgColor="#c74323", $fontColor="white")
+AddElementTag("database", $bgColor="#8ca965", $fontColor="white")
+
+Container(apiGateway, "API Gateway", "Nginx", $sprite="nginx_original")
+Container(serviceAuth, "Сервис аутентификации")
+
+System_Boundary(systemBoundary, "Компонент сервиса устройств") {
+    Container(componentDevice, "Добавление удаление устройств")
+    Container(componentSet, "Изменение состояния устройств")
+    Container(componentGet, "Получение данных с устройств")
+
+    Container(componentDeviceRepository, "Репозиторий устройств", "Реализация взаимодействия с базой данных")
+
+    Container(componentMessageQueue, "Отправка событий", "Отправка событий в очередь сообщений")
+}
+
+ContainerQueue(messageQueue, "Очередь сообщений", "Apache Kafka", $sprite="apachekafka_original", $tags="broker_message")
+ContainerDb(devices_db, "Устройства и их конфигурация", "PostgreSQL", $sprite="postgresql", $tags="database")
+
+Rel_U(systemBoundary, serviceAuth, "REST", "HTTPS/JSON")
+
+Rel_D(apiGateway, componentDevice, "REST", "HTTPS/JSON")
+Rel_D(apiGateway, componentSet, "REST", "HTTPS/JSON")
+Rel_D(apiGateway, componentGet, "REST", "HTTPS/JSON")
+
+Rel_D(componentDevice, componentDeviceRepository, "Запрос в репозиторий")
+Rel_D(componentSet, componentDeviceRepository, "Запрос в репозиторий")
+Rel_D(componentGet, componentDeviceRepository, "Запрос в репозиторий")
+
+Rel_D(componentDeviceRepository, devices_db, "чтение запись", "SQL")
+
+Rel_D(componentSet, componentMessageQueue, "отправка события")
+Rel_D(componentDevice, componentMessageQueue, "отправка события")
+Rel_D(componentMessageQueue, messageQueue, "отправка события")
+
+@enduml
